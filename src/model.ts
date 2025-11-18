@@ -1113,6 +1113,19 @@ export const providers: ProvidersMap = {
     },
     createModel: defaultModelCreator,
   },
+  cerebras: {
+    id: 'cerebras',
+    env: ['CEREBRAS_API_KEY'],
+    name: 'Cerebras',
+    api: 'https://api.cerebras.ai/v1',
+    doc: 'https://cerebras.ai/docs',
+    models: {
+      'gpt-oss-120b': models['gpt-oss-120b'],
+      'qwen-3-235b-a22b-instruct-2507': models['qwen3-235b-a22b-07-25'],
+      'zai-glm-4.6': models['glm-4.6'],
+    },
+    createModel: defaultModelCreator,
+  },
   openrouter: {
     id: 'openrouter',
     env: ['OPENROUTER_API_KEY', 'OPEN_ROUTER_API_KEY'],
