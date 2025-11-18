@@ -80,6 +80,8 @@ export function App() {
     bridge,
     sessionId,
     cwd,
+    status,
+    processingStartTime,
   } = useAppStore();
   const [forkMessages, setForkMessages] = React.useState<any[]>([]);
   const [forkLoading, setForkLoading] = React.useState(false);
@@ -104,6 +106,7 @@ export function App() {
       }
     })();
   }, [forkModalVisible, bridge, cwd, sessionId]);
+
   return (
     <Box
       flexDirection="column"
@@ -112,6 +115,7 @@ export function App() {
       <Messages />
       <BackgroundPrompt />
       <PlanResult />
+      
       <ActivityIndicator />
       <QueueDisplay />
       <ChatInput />

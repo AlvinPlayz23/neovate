@@ -24,6 +24,7 @@ import { SPACING, UI_COLORS } from './constants';
 import { DiffViewer } from './DiffViewer';
 import { GradientString } from './GradientString';
 import { Markdown } from './Markdown';
+import { ToolIndicator, ToolPairIndicator } from './ToolIndicator';
 import { useAppStore } from './store';
 import { TodoList, TodoRead } from './Todo';
 
@@ -432,25 +433,67 @@ function AssistantText({
 function ToolUse({ part }: { part: ToolUsePart }) {
   const { name, displayName } = part;
   const description = part.description;
+  
+  // Determine tool category based on tool name
+  const getToolCategory = (toolName: string): 'read' | 'write' | 'command' | 'network' => {
+    const readTools = ['read', 'ls', 'glob', 'grep'];
+    const writeTools = ['write', 'edit'];
+    const commandTools = ['bash'];
+    const networkTools = ['fetch'];
+    
+    if (readTools.includes(toolName)) return 'read';
+    if (writeTools.includes(toolName)) return 'write';
+    if (commandTools.includes(toolName)) return 'command';
+    if (networkTools.includes(toolName)) return 'network';
+    return 'read'; // default
+  };
+
   return (
-    <Box marginTop={SPACING.MESSAGE_MARGIN_TOP}>
-      <Text bold color={UI_COLORS.TOOL}>
-        {displayName || name}
-      </Text>
-      {description && (
-        <Text color={UI_COLORS.TOOL_DESCRIPTION}>({description})</Text>
-      )}
-    </Box>
+    <ToolIndicator
+      toolName={name}
+      displayName={displayName}
+      description={description}
+      status="running"
+      category={getToolCategory(name)}
+      isAnimated={true}
+    />
   );
 }
 
 function ToolPair({ pair }: { pair: ToolPair }) {
+  const { name, displayName } = pair.toolUse;
+  const description = pair.toolUse.description;
+  const hasResult = !!pair.toolResult;
+  const hasError = pair.toolResult?.result?.isError || false;
+
+  // Determine tool category based on tool name
+  const getToolCategory = (toolName: string): 'read' | 'write' | 'command' | 'network' => {
+    const readTools = ['read', 'ls', 'glob', 'grep'];
+    const writeTools = ['write', 'edit'];
+    const commandTools = ['bash'];
+    const networkTools = ['fetch'];
+    
+    if (readTools.includes(toolName)) return 'read';
+    if (writeTools.includes(toolName)) return 'write';
+    if (commandTools.includes(toolName)) return 'command';
+    if (networkTools.includes(toolName)) return 'network';
+    return 'read'; // default
+  };
+
   return (
     <Box flexDirection="column">
-      {/* Render ToolUse */}
-      <ToolUse part={pair.toolUse} />
+      {/* Enhanced Tool Pair Indicator */}
+      <ToolPairIndicator
+        toolName={name}
+        displayName={displayName}
+        description={description}
+        category={getToolCategory(name)}
+        hasResult={hasResult}
+        isRunning={!hasResult}
+        hasError={hasError}
+      />
 
-      {/* Render ToolResult if available */}
+      {/* Render detailed ToolResult if available */}
       {pair.toolResult && (
         <Box marginTop={SPACING.MESSAGE_MARGIN_TOP_TOOL_RESULT}>
           <ToolResultItem part={pair.toolResult} />
